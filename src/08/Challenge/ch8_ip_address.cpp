@@ -9,15 +9,75 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <sstream>
+
+bool validateSegment(const std::string& ip)
+{
+    try
+    {
+        if(ip.empty())
+            return false;
+        if(ip.front() == ' ')
+            return false;
+        if(ip.front() == '0' && ip.size() > 1)
+            return false;
+        size_t pos = 0;
+        int segment = std::stoi(ip, &pos);
+        if(pos != ip.length())
+            return false;
+        if(segment < 0 || segment > 255)
+            return false;
+    }
+    catch(const std::exception& e)
+    {
+        return false;
+    }
+    return true;
+}
 
 // is_valid_ip()
 // Summary: This function validates an IP address.
 // Arguments:
 //           ip: The string to analyze with a potential ip address.
 // Returns: A boolean value. True for valid ip addresses, false otherwise.
+// bool is_valid_ip(std::string ip){
+
+//     // Write your code here
+   
+//     short count = 0;
+//     std::stringstream ss (ip);
+    
+//     std::string item;
+//     while (getline (ss, item, '.')) {
+//         ++count;
+//         if(count > 4 || !validateSegment(item))
+//             return false;
+//     }
+//     return 4 == count;
+// }
+
 bool is_valid_ip(std::string ip){
 
     // Write your code here
+   
+    short count = 0;
+    size_t pos = 0;
+    size_t last = 0;
+    
+    while(count < 4)
+    {
+        ++count;
+
+        last = ip.find('.', pos);
+        auto st = ip.substr(pos, last == std::string::npos ? last : last - pos);
+
+        if(!validateSegment(st))
+            return false;
+        if (last == std::string::npos)
+            return 4 == count;
+
+        pos = last+1;
+    }
 
     return false;
 }
