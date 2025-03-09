@@ -34,11 +34,40 @@ void ask_for_move(char game[][3], char mark){
 //           mark: The AI's mark: 'X' or 'O'.
 // Returns: Nothing.
 
-#define TWO_PLAYERS
+bool checkForTwo(char game[][3], char mark, std::pair<int,int> &pos){ 
+
+    for(int i {}; i < 3; ++i)
+    if(game[i][0] == game[i][1] == game[i][2])
+        return game[i][0];
+
+        for(int i {}; i < 3; ++i)
+        if(game[0][i] == game[1][i] == game[2][i])
+            return game[0][i];
+
+            
+            if(game[0][0] == game[1][1] == game[2][2])
+                return game[0][0];
+
+                if(game[0][2] == game[1][1] == game[2][0])
+                return game[1][1];
+}
+
+//#define TWO_PLAYERS
 void make_move(char game[][3], char mark){ 
     #ifdef TWO_PLAYERS
     ask_for_move(game,mark);
     #else
+
+    std::pair<int, int> pos;
+    if(game[1][1] == ' ')
+        game[1][1] = mark;
+    else if(checkForTwo(game, mark == 'X' ? 'O' : 'X', pos))
+        game[pos.first][pos.second] = mark;
+    else
+        //check if already can put third one -> do it!
+        // if not, find a one already and try to set second one somewhere
+        // if not, start with corner
+        game[]
     
     // Write your code here and comment out the definition of TWO_PLAYERS above
 
@@ -59,7 +88,32 @@ char game_state(char game[][3]){
 
     // Write your code here
 
-    return 'a';
+
+
+    for(int i {}; i < 3; ++i)
+        if(game[i][0] == game[i][1] == game[i][2])
+            return game[i][0];
+
+            for(int i {}; i < 3; ++i)
+            if(game[0][i] == game[1][i] == game[2][i])
+                return game[0][i];
+
+                
+                if(game[0][0] == game[1][1] == game[2][2])
+                    return game[0][0];
+
+                    if(game[0][2] == game[1][1] == game[2][0])
+                    return game[1][1];
+
+
+
+
+            for(int i {}; i < 3; ++i)
+                for(int j {}; j < 3; ++j)
+                    if(game[i][j] == ' ')
+                    return 'a';
+
+    return 't';
 }
 
 // print_game()
