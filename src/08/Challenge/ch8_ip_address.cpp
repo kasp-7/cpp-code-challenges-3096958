@@ -13,6 +13,7 @@
 
 bool validateSegment(const std::string& ip)
 {
+    std::stringstream ss(std::cin);
     try
     {
         if(ip.empty())
