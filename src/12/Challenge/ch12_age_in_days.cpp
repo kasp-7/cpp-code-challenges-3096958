@@ -7,11 +7,12 @@
 #include <iostream>
 #include <string>
 #include <ctime>
+#include <chrono>
 
 // Age in Days, main()
 // Summary: This application asks the user's birth date and prints their age in days.
 int main(){
-    int birth_y, birth_m, birth_d, today_y, today_m, today_d, age;
+    int birth_y, birth_m, birth_d, today_y, today_m, today_d;
 
     std::cout << "Enter your birth date's month as a number: " << std::flush;
     std::cin >> birth_m;
@@ -26,6 +27,18 @@ int main(){
         birth_m = 12;
 
     // Write your code here
+    std::tm tm = { /* .tm_sec  = */ 0,
+        /* .tm_min  = */ 0,
+        /* .tm_hour = */ 0,
+        /* .tm_mday = */ (birth_d),
+        /* .tm_mon  = */ (birth_m) - 1,
+        /* .tm_year = */ (birth_y) - 1900,
+      };
+
+auto tp = std::chrono::system_clock::from_time_t(std::mktime(&tm));
+auto now = std::chrono::system_clock::now();
+
+int32_t age = std::chrono::duration_cast<std::chrono::duration<int32_t, std::ratio<86400>>>(now - tp).count();
 
     if(age < 43830)
         std::cout << "You are " << age << " days old.";
