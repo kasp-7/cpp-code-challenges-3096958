@@ -19,6 +19,87 @@
 #define N 10
 #define M 10
 
+bool isCellAlive(char cell)
+{
+    return cell == 'X' || cell == '_';
+}
+
+// if cell was dead and now dead '-'
+// if cell was live, but now dead '_'
+// if cell was dead, but now live 'x'
+// if cell was live and now live 'X'
+void doCellLive(char* cell, bool alive)
+{
+    if(*cell == 'X')
+        *cell = !alive ? '_' : *cell;
+
+        if(*cell == '-')
+        *cell = alive ? 'x' : *cell;
+}
+
+void wrapIndex(int& i, int& j)
+{
+    if (i < 0)
+        i += N;
+    else if (i >= N)
+        i -=N;
+
+    if (j < 0)
+        j += M;
+    else if (j >= M)
+        j -=M;
+}
+
+int countLiveNeighbours(char game[][M], int i, int j)
+{
+    int res = 0;
+    int  im = i - 1;
+    int ip = i+1;
+    int  jm = j - 1;
+    int jp = j+1;
+    wrapIndex(im, jm);
+    wrapIndex(ip, jp);
+    res += isCellAlive(game[im][jm]);
+    res += isCellAlive(game[im][j]);
+    res += isCellAlive(game[im][jp]);
+    res += isCellAlive(game[i][jm]);
+    res += isCellAlive(game[i][jp]);
+    res += isCellAlive(game[ip][jm]);
+    res += isCellAlive(game[ip][j]);
+    res += isCellAlive(game[ip][jp]);
+    return res;
+}
+
+void generateNext(char game[][M])
+{
+    for (int i = 0; i < N; ++i)
+    for (int j = 0; j < M; ++j)
+    {
+        int n = countLiveNeighbours(game, i, j);
+        char* currentCell = &game[i][j];
+        if(isCellAlive(*currentCell))
+        {
+            if( n < 2 || n > 3)
+            doCellLive(currentCell, false);
+        }
+        else
+        {
+            if (3 == n)
+            doCellLive(currentCell, true);
+        }
+    }
+
+    for (int i = 0; i < N; ++i)
+    for (int j = 0; j < M; ++j)
+    {
+        if(game[i][j] == 'x')
+        game[i][j] = 'X';
+
+        if(game[i][j] == '_')
+        game[i][j] = '-';
+    }
+}
+
 // Conway's Game of Life, main()
 // Summary: This application is a simulation of Conway's game of life.
 int main(){    
@@ -50,6 +131,7 @@ int main(){
         std::cout << "\n";
 
         // Write your code here
+        generateNext(game);
         
         std::cout << "Press Enter for the next generation, or type \"Exit\": " << std::flush;
         std::getline(std::cin,go_on);
