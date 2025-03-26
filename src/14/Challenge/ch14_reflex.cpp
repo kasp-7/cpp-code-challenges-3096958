@@ -11,8 +11,11 @@
 #include <string>
 #include <chrono>
 #include <algorithm>
+
+#include <random> 
+#include <thread>
  
-std::string words[10]={"CAT","RAT","BAT","CAP","BAG","RAG","RAP","BET","BEG","LET"};
+std::string words[3]={"CAT","RAT","BAT"};
 
 // The Reflex Game, main()
 // Summary: This application measures the time it takes a user to type in a random 3-letter word.
@@ -27,9 +30,43 @@ int main(){
 
     std::string try_again;
     std::getline(std::cin, try_again);
+
+    std::default_random_engine generator;
+  
+    std::uniform_int_distribution<int> distribution_words(0, 2);
+    std::uniform_int_distribution<int> distribution_time(4, 8);
     do{
 
         // Write your code here
+        std::this_thread::sleep_for(std::chrono::seconds(distribution_time(generator)));
+
+        auto word = words[distribution_words(generator)];
+        std::cout << "WRITE A WORD!\n" << std::flush;
+
+        auto begin = std::chrono::system_clock::now();
+        std::getline(std::cin, try_again);
+        auto end = std::chrono::system_clock::now();
+
+        auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
+        
+        bool success = false;
+        if(elapsed < 2000)
+        {
+            std::transform(try_again.begin(), try_again.end(), try_again.begin(), ::toupper);
+
+            if(try_again == word)
+            success = true;
+        }
+        else
+        {
+            std::cout << "Too slow...\n" << std::flush;
+        }
+
+        if(success)
+        std::cout << "Success!\n" << std::flush;
+        else
+        std::cout << "Good luck next time...\n" << std::flush;
+
 
         std::cout << "Try again? (Y/N): " << std::flush;
         std::getline(std::cin, try_again);
