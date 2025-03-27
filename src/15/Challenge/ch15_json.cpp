@@ -17,16 +17,79 @@
 // Arguments:
 //           filename: A string with the name of the file to open.
 // Returns: An integer enconding: 1 for valid JSON files, 0 for invalid, and -1 on failure to open file. 
+
+bool checkChar(char c, bool finish = false)
+{
+    static std::stack<char> sym;
+    static bool openedQuote = false;
+
+    if(finish)
+        return sym.empty();
+    else
+    {
+        if(c == '"')
+        {
+            openedQuote = !openedQuote;
+            return true;
+        }
+
+        if(openedQuote)
+            return true;
+
+        switch(c)
+        {
+            case '[':
+                sym.push('[');
+            break;
+            case '{':
+            sym.push('{');
+            break;
+            case ']':
+                if(!sym.empty() && sym.top() == '[')
+                    sym.pop();
+                else
+                    return false;
+                break;
+                    case '}':
+                    if(!sym.empty() && sym.top() == '{')
+                        sym.pop();
+                    else
+                        return false;
+                    break;
+            default:
+            return true;
+        }
+
+        return true;
+    }
+}
+
+
 int is_valid_JSON(std::string filename){
     std::string line;
-    bool quotes = false; 
+    bool res = true; 
 
     std::fstream file (filename, std::ios::in);
     if(file.is_open()){
  
         // Write your code here
 
+        typedef std::istreambuf_iterator<char> buf_iter;
+        int count = 0;
+        for(buf_iter i(file), e; i != e; ++i){
+          char c = *i;
+
+          if(!checkChar(c))
+          {
+          res = false;
+          std::cout << "The JSON file is invalid! Char = "<<c << " " << count <<"\n\n";
+          break;
+          }
+          ++count;
+        }
+
         file.close();
+        return res && checkChar(' ', true);
     }
     else
         return -1;
